@@ -2,6 +2,20 @@
 
 An interactive browser experience that turns live hand gestures into a particle-based celebration of China and Dalian University of Technology (DUT / 大工).
 
+## Project preview
+
+### 1. Activate with a Victory gesture
+
+![Victory hand gesture activating the particle experience](picture/01-victory-gesture.jpg)
+
+### 2. Guide the particle formation
+
+![Hand gestures controlling the real-time particle formation](picture/02-particle-formation.jpg)
+
+### 3. Reveal the final message
+
+![Final bilingual I Love China particle message](picture/03-final-message.jpg)
+
 ## Use
 
 1. Select the camera button and allow access.
