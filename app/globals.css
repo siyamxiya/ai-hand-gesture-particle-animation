@@ -1,0 +1,275 @@
+:root {
+  --night: #010307;
+  --ice: #9cddff;
+  --blue: #39aef4;
+  --red: #eb2841;
+  --gold: #ffd65a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  overflow: hidden;
+  background: var(--night);
+}
+
+body,
+button {
+  font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 5px;
+}
+
+.gesture-stage {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(21, 80, 130, .22), transparent 34%),
+    radial-gradient(circle at 18% 80%, rgba(12, 52, 91, .14), transparent 34%),
+    #010307;
+  transition: background 1.3s ease;
+}
+
+.gesture-stage.stage-final {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(124, 16, 29, .22), transparent 38%),
+    radial-gradient(circle at 50% 70%, rgba(114, 77, 7, .12), transparent 34%),
+    #020207;
+}
+
+.particle-world {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.star-haze {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  opacity: .36;
+  background-image:
+    radial-gradient(circle at 17% 23%, rgba(181, 231, 255, .7) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 72% 18%, rgba(90, 189, 255, .6) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 82% 76%, rgba(180, 224, 255, .48) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 28% 84%, rgba(255, 213, 90, .38) 0 1px, transparent 1.5px);
+  background-size: 197px 173px, 233px 211px, 271px 257px, 313px 283px;
+}
+
+.vignette {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 15vw 6vw rgba(0, 1, 4, .95);
+}
+
+.camera-orb {
+  position: absolute;
+  z-index: 5;
+  top: clamp(1rem, 3vw, 2.4rem);
+  right: clamp(1rem, 3vw, 2.4rem);
+  width: clamp(4.5rem, 8vw, 7rem);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid rgba(94, 198, 255, .2);
+  border-radius: 50%;
+  background: rgba(5, 14, 24, .72);
+  box-shadow: 0 0 35px rgba(34, 155, 235, .08);
+  opacity: 0;
+  transform: scale(.86);
+  pointer-events: none;
+  transition: opacity .6s ease, transform .6s ease, border-color .6s ease;
+}
+
+.camera-orb.is-active {
+  opacity: .54;
+  transform: scale(1);
+}
+
+.camera-orb video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(.1) contrast(1.35) brightness(.62) hue-rotate(155deg);
+  transform: scaleX(-1);
+}
+
+.camera-orb::before,
+.camera-orb::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 8%;
+  border-radius: 50%;
+  border-top: 1px solid rgba(117, 215, 255, .62);
+  animation: orbit 4s linear infinite;
+}
+
+.camera-orb::after {
+  inset: -12%;
+  border-color: rgba(255, 212, 75, .25);
+  animation-direction: reverse;
+  animation-duration: 7s;
+}
+
+.camera-orb i {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(98, 209, 255, .82), transparent);
+  box-shadow: 0 0 12px rgba(71, 186, 255, .72);
+  animation: scan 2.5s ease-in-out infinite;
+}
+
+.camera-button {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  bottom: max(1.4rem, env(safe-area-inset-bottom));
+  width: 3.65rem;
+  height: 3.65rem;
+  padding: 0;
+  border: 1px solid rgba(129, 212, 255, .32);
+  border-radius: 50%;
+  color: rgba(208, 239, 255, .78);
+  background: rgba(4, 15, 26, .68);
+  box-shadow:
+    0 0 0 8px rgba(70, 180, 255, .025),
+    0 0 34px rgba(47, 174, 255, .14),
+    inset 0 0 18px rgba(67, 180, 255, .08);
+  backdrop-filter: blur(14px);
+  transform: translateX(-50%);
+  cursor: pointer;
+  transition: color .35s ease, border-color .35s ease, box-shadow .35s ease, transform .25s ease;
+}
+
+.camera-button:hover {
+  color: #fff;
+  border-color: rgba(141, 221, 255, .66);
+  box-shadow: 0 0 42px rgba(47, 174, 255, .28), inset 0 0 18px rgba(67, 180, 255, .12);
+}
+
+.camera-button:active {
+  transform: translateX(-50%) scale(.92);
+}
+
+.camera-button.is-active {
+  color: var(--gold);
+  border-color: rgba(255, 215, 82, .6);
+  box-shadow: 0 0 42px rgba(255, 69, 83, .2), inset 0 0 19px rgba(255, 198, 67, .1);
+}
+
+.camera-button.is-blocked {
+  color: #ff6b78;
+  border-color: rgba(255, 74, 94, .58);
+  animation: denied .42s ease-in-out;
+}
+
+.camera-button:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+.camera-button svg {
+  width: 1.45rem;
+  height: 1.45rem;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.45;
+}
+
+.stage-meter {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  bottom: calc(max(1.4rem, env(safe-area-inset-bottom)) + 4.65rem);
+  display: flex;
+  gap: .42rem;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.stage-meter span {
+  width: .28rem;
+  height: .28rem;
+  border-radius: 50%;
+  background: rgba(145, 215, 255, .18);
+  box-shadow: 0 0 8px transparent;
+  transition: width .5s ease, border-radius .5s ease, background .5s ease, box-shadow .5s ease;
+}
+
+.stage-meter[data-stage="dormant"] span:nth-child(1),
+.stage-meter[data-stage="forming"] span:nth-child(-n + 2),
+.stage-meter[data-stage="final"] span {
+  background: rgba(108, 209, 255, .9);
+  box-shadow: 0 0 11px rgba(58, 178, 255, .8);
+}
+
+.stage-meter[data-stage="forming"] span:nth-child(2),
+.stage-meter[data-stage="final"] span:nth-child(3) {
+  width: 1.4rem;
+  border-radius: 1rem;
+}
+
+.stage-meter[data-stage="final"] span {
+  background: var(--gold);
+  box-shadow: 0 0 12px rgba(255, 204, 67, .8);
+}
+
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes scan {
+  0%, 100% { transform: translateY(-2.2rem); opacity: 0; }
+  20%, 80% { opacity: 1; }
+  50% { transform: translateY(2.2rem); }
+}
+
+@keyframes denied {
+  25% { transform: translateX(calc(-50% - 4px)); }
+  75% { transform: translateX(calc(-50% + 4px)); }
+}
+
+@media (max-width: 720px) {
+  .camera-orb {
+    width: 4.4rem;
+  }
+
+  .camera-button {
+    width: 3.35rem;
+    height: 3.35rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .camera-orb::before,
+  .camera-orb::after,
+  .camera-orb i,
+  .camera-button.is-blocked {
+    animation: none;
+  }
+}
